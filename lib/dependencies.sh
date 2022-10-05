@@ -166,6 +166,11 @@ yarn_prune_devdependencies() {
     echo "Skipping because YARN_PRODUCTION is '$YARN_PRODUCTION'"
     meta_set "skipped-prune" "true"
     return 0
+  # added by Monroe
+  elif [ -n "$YARN_SKIP_PRUNE" ]; then
+    echo "Skipping because YARN_SKIP_PRUNE is '$YARN_SKIP_PRUNE'"
+    meta_set "skipped-prune" "true"
+    return 0
   elif $YARN_2; then
     if [ "$YARN2_SKIP_PRUNING" == "true" ]; then
       echo "Skipping because YARN2_SKIP_PRUNING is '$YARN2_SKIP_PRUNING'"
