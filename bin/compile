@@ -284,8 +284,10 @@ restore_cache() {
   elif [[ "$cache_status" == "valid" ]]; then
     header "Restoring cache"
     if [[ "$cache_directories" == "" ]]; then
+      echo "Default cache directories ${BUILD_DIR} ${CACHE_DIR} ${YARN_CACHE_FOLDER} ${NPM_CONFIG_CACHE}"
       restore_default_cache_directories "$BUILD_DIR" "$CACHE_DIR" "$YARN_CACHE_FOLDER" "$NPM_CONFIG_CACHE"
     else
+      echo "Custom cache directories ${BUILD_DIR} ${CACHE_DIR} ${cache_directories}"
       restore_custom_cache_directories "$BUILD_DIR" "$CACHE_DIR" "$cache_directories"
     fi
   elif [[ "$cache_status" == "new-signature" ]]; then
@@ -354,10 +356,10 @@ cache_build() {
     # so be silent here
     :
   elif [[ "$cache_directories" == "" ]]; then
-    header "Caching build"
+    header "Caching build - default directories"
     save_default_cache_directories "$BUILD_DIR" "$CACHE_DIR" "$YARN_CACHE_FOLDER" "$NPM_CONFIG_CACHE"
   else
-    header "Caching build"
+    header "Caching build - custom directories"
     save_custom_cache_directories "$BUILD_DIR" "$CACHE_DIR" "$cache_directories"
   fi
   save_signature "$CACHE_DIR"

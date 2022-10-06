@@ -76,17 +76,18 @@ restore_default_cache_directories() {
     else
       echo "- npm cache (not cached - skipping)"
     fi
+  fi
+
+  # Monroe: took this out of the above `if YARN`'s elif because I want both the yarn cache and node_modules to cache to speed up `yarn install`
+  # node_modules
+  if [[ -e "$build_dir/node_modules" ]]; then
+    echo "- node_modules is checked into source control and cannot be cached"
+  elif [[ -e "$cache_dir/node/cache/node_modules" ]]; then
+    echo "- node_modules"
+    mkdir -p "$(dirname "$build_dir/node_modules")"
+    mv "$cache_dir/node/cache/node_modules" "$build_dir/node_modules"
   else
-    # node_modules
-    if [[ -e "$build_dir/node_modules" ]]; then
-      echo "- node_modules is checked into source control and cannot be cached"
-    elif [[ -e "$cache_dir/node/cache/node_modules" ]]; then
-      echo "- node_modules"
-      mkdir -p "$(dirname "$build_dir/node_modules")"
-      mv "$cache_dir/node/cache/node_modules" "$build_dir/node_modules"
-    else
-      echo "- node_modules (not cached - skipping)"
-    fi
+    echo "- node_modules (not cached - skipping)"
   fi
 
   # bower_components, should be silent if it is not in the cache
@@ -148,17 +149,18 @@ save_default_cache_directories() {
     else
       echo "- npm cache (nothing to cache)"
     fi
+  fi
+
+  # Monroe: took this out of the above `if YARN`'s elif because I want both the yarn cache and node_modules to cache to speed up `yarn install`
+  # node_modules
+  if [[ -e "$build_dir/node_modules" ]]; then
+    echo "- node_modules"
+    mkdir -p "$cache_dir/node/cache/node_modules"
+    cp -a "$build_dir/node_modules" "$(dirname "$cache_dir/node/cache/node_modules")"
   else
-    # node_modules
-    if [[ -e "$build_dir/node_modules" ]]; then
-      echo "- node_modules"
-      mkdir -p "$cache_dir/node/cache/node_modules"
-      cp -a "$build_dir/node_modules" "$(dirname "$cache_dir/node/cache/node_modules")"
-    else
-      # this can happen if there are no dependencies
-      mcount "cache.no-node-modules"
-      echo "- node_modules (nothing to cache)"
-    fi
+    # this can happen if there are no dependencies
+    mcount "cache.no-node-modules"
+    echo "- node_modules (nothing to cache)"
   fi
 
   # bower_components
